@@ -23,7 +23,7 @@ echoe_spec = Echoe.new("mongrel_service") do |p|
     '~/projects/gem_certificates/mongrel-public_cert.pem',
     '~/projects/gem_certificates/luislavena-mongrel-public_cert.pem'
   ]
-  p.require_signed = true
+  p.require_signed = false
 end
 
 desc "Compile native code"

@@ -14,14 +14,14 @@ e = Echoe.new("mongrel") do |p|
   p.dependencies = ['gem_plugin >=0.2.3']  
   p.extension_pattern = nil
   
-  p.certificate_chain = case ENV['USER']
-    when 'eweaver' 
-      ['~/p/configuration/gem_certificates/mongrel/mongrel-public_cert.pem',
-       '~/p/configuration/gem_certificates/evan_weaver-mongrel-public_cert.pem']
-    when 'luislavena'
-      ['~/gem_certificates/mongrel-public_cert.pem',
-        '~/gem_certificates/luislavena-mongrel-public_cert.pem']    
-  end
+  # p.certificate_chain = case ENV['USER']
+  #   when 'eweaver' 
+  #     ['~/p/configuration/gem_certificates/mongrel/mongrel-public_cert.pem',
+  #      '~/p/configuration/gem_certificates/evan_weaver-mongrel-public_cert.pem']
+  #   when 'luislavena'
+  #     ['~/gem_certificates/mongrel-public_cert.pem',
+  #       '~/gem_certificates/luislavena-mongrel-public_cert.pem']    
+  # end
   
   p.need_tar_gz = false
   p.need_tgz = true
@@ -41,7 +41,7 @@ e = Echoe.new("mongrel") do |p|
       self.platform = 'jruby' # XXX Is this right?
     else
       add_dependency('daemons', '>= 1.0.3')
-      add_dependency('fastthread', '>= 1.0.1')
+      add_dependency('fastthread', '>= 1.0.1') unless RUBY_VERSION > '1.8.5'
       add_dependency('cgi_multipart_eof_fix', '>= 2.4')
     end
   end
@@ -124,7 +124,8 @@ def sub_project(project, *targets)
   targets.each do |target|
     Dir.chdir "projects/#{project}" do
       unless RUBY_PLATFORM =~ /mswin/
-        sh("rake #{target.to_s}") # --trace 
+        puts "sub_project: #{project}, target: #{target}"
+        sh("rake #{target.to_s} --trace") # --trace 
       end
     end
   end
@@ -134,7 +135,7 @@ desc "Package Mongrel and all subprojects"
 task :package_all => [:package] do
   sub_project("gem_plugin", :package)
   sub_project("cgi_multipart_eof_fix", :package)
-  sub_project("fastthread", :package)
+  sub_project("fastthread", :package) unless RUBY_VERSION > '1.8.5'
   sub_project("mongrel_status", :package)
   sub_project("mongrel_upload_progress", :package)
   sub_project("mongrel_console", :package)
@@ -152,7 +153,7 @@ task :install_requirements do
   # These run before Mongrel is installed
   sub_project("gem_plugin", :install)
   sub_project("cgi_multipart_eof_fix", :install)
-  sub_project("fastthread", :install)
+  sub_project("fastthread", :install) unless RUBY_VERSION > '1.8.5'
 end
 
 desc "for Mongrel and all subprojects"
@@ -173,7 +174,7 @@ task :uninstall => [:clean] do
   sub_project("mongrel_upload_progress", :uninstall)
   sub_project("mongrel_console", :uninstall)
   sub_project("gem_plugin", :uninstall)
-  sub_project("fastthread", :uninstall)
+  sub_project("fastthread", :uninstall) unless RUBY_VERSION > '1.8.5'
   # sub_project("mongrel_experimental", :uninstall)
   sub_project("mongrel_service", :uninstall) if RUBY_PLATFORM =~ /mswin/
 end
@@ -182,7 +183,7 @@ desc "for Mongrel and all its subprojects"
 task :clean do
   sub_project("gem_plugin", :clean)
   sub_project("cgi_multipart_eof_fix", :clean)
-  sub_project("fastthread", :clean)
+  sub_project("fastthread", :clean) unless RUBY_VERSION > '1.8.5'
   sub_project("mongrel_status", :clean)
   sub_project("mongrel_upload_progress", :clean)
   sub_project("mongrel_console", :clean)

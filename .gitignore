@@ -1,0 +1,7 @@
+Makefile
+conftest.*
+*.bundle
+*.o
+*.log
+*.gemspec
+pkg**

@@ -1,3 +1,4 @@
+v1.1.2.0.1 Made fastthread conditional (RUBY_VERSION < 1.8.6) so we can compile on Ruby 1.9; removed mandatory signing.
 
 v1.1.2. Fix worker termination bug; fix JRuby 1.0.3 load order issue; fix require issue on systems without Rubygems.
 
